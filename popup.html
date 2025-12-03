@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NJU Captcha Auto-Fill</title>
+  <style>
+    :root {
+      --accent: #1fa2ff;
+      --gray-bg: #f6f7fb;
+      --shadow: 0 4px 16px rgba(60,60,67,0.06);
+      --primary-text: #18191a;
+      --secondary-text: #444a50;
+      --muted: #aaa;
+      --border: #e8e8ea;
+      --surface: #fff;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      min-height: 100%;
+      background: var(--gray-bg);
+      color: var(--primary-text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      width: 320px;
+      margin: 0 auto;
+      padding: 20px 14px;
+      background: var(--gray-bg);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 320px;
+      background: var(--surface);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      padding: 20px 16px 12px 16px;
+      text-align: center;
+      border: 1px solid var(--border);
+    }
+
+    .logo {
+      width: 60px;
+      height: 60px;
+      margin: 0 auto 14px auto;
+      background: linear-gradient(135deg, #e6e6e9 0%, #f3f3f4 100%);
+      box-shadow: 0 2px 7px rgba(100,100,110,0.09);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      color: #7c7c87;
+      border: 1px solid #ededf1;
+      user-select: none;
+      transition: box-shadow .15s;
+    }
+
+    .logo:hover {
+      box-shadow: 0 6px 24px rgba(80,80,90,0.10);
+    }
+
+    h1 {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--primary-text);
+      margin-bottom: 7px;
+      letter-spacing: 0.01em;
+      text-shadow: 0 1px 0 rgba(240,240,250,0.06);
+    }
+
+    .subtitle {
+      font-size: 13px;
+      color: var(--secondary-text);
+      opacity: 0.80;
+      margin-bottom: 17px;
+      letter-spacing: 0.01em;
+    }
+
+    .status {
+      background: #f2f3f6;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 15px 14px 12px 14px;
+      margin-bottom: 15px;
+      text-align: left;
+      box-shadow: none;
+    }
+
+    .status-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      margin-bottom: 9px;
+    }
+
+    .status-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .status-label {
+      color: var(--secondary-text);
+      font-weight: 500;
+      letter-spacing: 0.01em;
+    }
+
+    .status-value {
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      color: var(--primary-text);
+    }
+
+    .status-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #60d394;
+      box-shadow: 0 0 2px #c6f2de;
+      border: 1px solid #e3f7eb;
+      display: inline-block;
+    }
+
+    .status-dot.loading {
+      background: #fcd34d;
+      border-color: #f9e7bd;
+      animation: pulse 1s infinite;
+    }
+
+    .status-dot.error {
+      background: #f87171;
+      border-color: #fad2d7;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+
+    .debug-section {
+      background: #f4f4f6;
+      border-radius: 7px;
+      padding: 12px;
+      margin-bottom: 15px;
+      text-align: left;
+      border: 1px solid #ececec;
+    }
+
+    .debug-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: #949394;
+      margin-bottom: 7px;
+    }
+
+    .debug-log {
+      font-family: SFMono-Regular, Menlo, Monaco, 'Liberation Mono', Consolas, monospace;
+      font-size: 11px;
+      background: #efefee;
+      border-radius: 5px;
+      padding: 9px 8px;
+      max-height: 106px;
+      overflow-y: auto;
+      color: #3a3a40;
+      line-height: 1.45;
+      border: 1px solid #e8e8ea;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .debug-log .error {
+      color: #f87171;
+      font-weight: 500;
+    }
+
+    .debug-log .warn {
+      color: #eab308;
+      font-weight: 500;
+    }
+
+    .btn {
+      background: #f4f4f6;
+      border: 1px solid #e0e0e5;
+      color: #2a2a2f;
+      padding: 8px 17px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 13px;
+      margin: 4px 7px 6px 0;
+      box-shadow: 0 1px 1px rgba(80,80,95,0.04);
+      transition: background .18s, color .18s, border .18s;
+    }
+
+    .btn:hover, .btn:active {
+      background: #e9e9eb;
+      color: #18191a;
+      border-color: #babac0;
+    }
+
+    .info {
+      font-size: 12px;
+      opacity: 0.74;
+      line-height: 1.7;
+      margin-top: 15px;
+      color: var(--secondary-text);
+      text-align: center;
+    }
+
+    .thanks-section {
+      font-size: 12px;
+      color: #6d6e73;
+      opacity: 0.88;
+      margin: 14px 0 2px 0;
+      text-align: left;
+      border-left: 3px solid #e5e7eb;
+      padding-left: 9px;
+      line-height: 1.56;
+      background: #f8f9fa;
+      border-radius: 6px;
+      font-style: normal;
+    }
+
+    .thanks-section .thanks-title {
+      font-weight: 600;
+      color: #86888b;
+      margin-bottom: 3px;
+      font-size: 12px;
+      letter-spacing: 0.01em;
+    }
+
+    a {
+      color: #4c70ff;
+      text-decoration: none;
+      transition: color .14s;
+      word-break: break-all;
+    }
+    a:hover {
+      color: #2e50d9;
+      text-decoration: underline;
+    }
+
+    @media (max-width: 360px) {
+      body, .container {
+        padding: 8px !important;
+        font-size: 14px;
+      }
+
+      .logo { margin-bottom: 10px; }
+      .debug-section, .status { padding: 7px; }
+      .debug-log { font-size: 9px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo" title="NJU Captcha Auto-Fill">🔐</div>
+    <h1>NJU Captcha Auto-Fill</h1>
+    <p class="subtitle">南大统一身份认证验证码自动填充</p>
+    
+    <div class="status">
+      <div class="status-item">
+        <span class="status-label">模型状态</span>
+        <span class="status-value">
+          <span class="status-dot" id="modelStatus"></span>
+          <span id="modelStatusText">检查中...</span>
+        </span>
+      </div>
+      <div class="status-item">
+        <span class="status-label">模型大小</span>
+        <span class="status-value" id="modelSize">-</span>
+      </div>
+      <div class="status-item">
+        <span class="status-label">推理方式</span>
+        <span class="status-value">本地 ONNX (WASM)</span>
+      </div>
+      <div class="status-item">
+        <span class="status-label">ONNX Runtime</span>
+        <span class="status-value" id="ortVersion">-</span>
+      </div>
+    </div>
+
+    <div class="debug-section">
+      <div class="debug-title">🔍 调试日志（按 F12 查看控制台完整日志）</div>
+      <div class="debug-log" id="debugLog">等待日志...</div>
+    </div>
+
+    <div style="margin-bottom:10px;">
+      <button class="btn" id="refreshBtn">🔄 刷新状态</button>
+      <button class="btn" id="testBtn">🧪 测试模型</button>
+    </div>
+
+    <div class="thanks-section">
+      <div class="thanks-title">数据集与方法致谢</div>
+      数据集与识别模型思路来源：
+      <a href="http://github.Do1e/NJUcaptcha" target="_blank" rel="noopener">http://github.Do1e/NJUcaptcha</a>
+      <br />感谢开源社区的贡献！
+    </div>
+
+    <p class="info">
+      访问 <a href="https://authserver.nju.edu.cn" target="_blank">NJU统一身份认证</a> 页面时，验证码将自动识别并填充。<br>
+      <br>
+      💡 如遇问题，请按 F12 打开开发者工具查看控制台日志。
+    </p>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>

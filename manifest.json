@@ -1,0 +1,42 @@
+{
+  "manifest_version": 3,
+  "name": "NJU Captcha Auto-Fill",
+  "version": "1.0.0",
+  "description": "自动识别并填充南京大学统一身份认证验证码",
+  "permissions": [],
+  "host_permissions": [
+    "https://authserver.nju.edu.cn/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://authserver.nju.edu.cn/authserver/login*",
+        "https://authserver.nju.edu.cn/authserver/userLogin*"
+      ],
+      "js": ["ort.min.js", "content.js"],
+      "run_at": "document_end"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "nju_captcha.onnx",
+        "nju_captcha.json",
+        "config.json"
+      ],
+      "matches": ["https://authserver.nju.edu.cn/*"]
+    }
+  ],
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png"
+    }
+  }
+}
