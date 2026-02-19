@@ -48,3 +48,4 @@
 
 - 油猴脚本参考：[lyc8503/ddddocr_web](https://github.com/lyc8503/ddddocr_web/blob/master/captcha.user.js)
 - 模型训练参考：[Do1e/NJUcaptcha](https://github.com/Do1e/NJUcaptcha)
+> Tips: 26年初验证码的风格发生了变化，Do1e的数据集也许已经过时！
