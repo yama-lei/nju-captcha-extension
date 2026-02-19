@@ -1,3 +1,9 @@
+# 悲报！
+2026.2.19发现验证码风格已经发生变化，本仓库内的模型已经挂掉了！
+<img width="1100" height="637" alt="4fa2b3e409c56d7f447e393f0282850a" src="https://github.com/user-attachments/assets/54a1949c-442e-4e84-a5da-460a5ec80366" />
+
+
+
 # NJU Captcha 油猴脚本
 
 一个极度轻量的南京大学统一身份认证验证码自动识别填充脚本。
