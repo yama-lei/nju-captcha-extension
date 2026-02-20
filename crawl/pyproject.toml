@@ -1,0 +1,10 @@
+[project]
+name = "crawl"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "lmdb>=1.7.5",
+    "requests>=2.32.5",
+]

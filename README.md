@@ -1,21 +1,14 @@
-# 悲报！
-2026.2.19发现验证码风格已经发生变化，本仓库内的模型已经挂掉了！
-<img width="1100" height="637" alt="4fa2b3e409c56d7f447e393f0282850a" src="https://github.com/user-attachments/assets/54a1949c-442e-4e84-a5da-460a5ec80366" />
-
-
-
 # NJU Captcha 油猴脚本
 
 一个极度轻量的南京大学统一身份认证验证码自动识别填充脚本。
 
-## 特性
+## Feature
+- Lightweight
+- Fast
+- All in one file(the model is converted to string using `base64`, the only requrement is wasm runtime of onnx)
 
-- 🚀 超轻量模型（量化后仅 159KB），响应速度极快
-- 🔒 本地 ONNX 推理，无需后端服务器
-- 🔄 自动识别并填充验证码，支持刷新后重新识别
-- 💻 纯 Vibe Coding，在 1080Ti (11GB) 上训练了 5 分钟
 
-## 安装
+## Installation
 
 ### 1. 安装 Tampermonkey
 
@@ -35,7 +28,7 @@
 
 或者手动复制 `nju_captcha.user.js` 内容到 Tampermonkey 新建脚本中。
 
-## 使用
+## Usage
 
 安装后访问南大统一身份认证页面，脚本会自动：
 1. 加载 ONNX 模型（首次加载可能需要几秒）
@@ -44,8 +37,26 @@
 
 点击验证码图片刷新后，脚本会自动重新识别。
 
-## 参考
+## Reference
 
 - 油猴脚本参考：[lyc8503/ddddocr_web](https://github.com/lyc8503/ddddocr_web/blob/master/captcha.user.js)
 - 模型训练参考：[Do1e/NJUcaptcha](https://github.com/Do1e/NJUcaptcha)
 > Tips: 26年初验证码的风格发生了变化，Do1e的数据集也许已经过时！
+
+## Training&Dataset
+
+Authserver caption was updated in the Feburary 2026, thus creating a data distribution shift, which made the old model failed to recgonize the text. (Due to the overfitting of my model)
+<img width="1100" height="637" alt="4fa2b3e409c56d7f447e393f0282850a" src="https://github.com/user-attachments/assets/54a1949c-442e-4e84-a5da-460a5ec80366" />
+
+So new datasets are collected using `crawl/crawl.py` to crawl new version of captcha.(To put simply, `https://authserver.nju.edu.cn/authserver/getCaptcha.htl?{a random number}` returns a random captcha img)
+
+Lmdb is used to accelarate the speed of data transfortation to avoid IO overdurance caused by creating/deleting numerous small files at one time.
+
+You can download colected imgs here: 
+- [NJU Auth Captcha Dataset(no annotations available)](https://box.nju.edu.cn/d/89b2fd03b5e646b493da/) . 
+- [NJU Class Selection Dataset(no annotations available)](https://box.nju.edu.cn/f/f53d445cd8434c798083/)
+
+
+It's worth mentioning that the Auth dataset is for http://authserver.nju.edu.cn, the official auth website of NJU with lmdb format. While Class Selection Dataset if for http://xk.nju.edu.cn with raw imgs.
+Both the datasets are not annotated(you may annotate them using `ddddocr` and `yolo` maybe).
+
