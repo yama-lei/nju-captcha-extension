@@ -3,10 +3,10 @@
 一个极度轻量的南京大学统一身份认证验证码自动识别填充脚本。
 
 ## Feature
-- Lightweight
-- Fast
+- Lightweight (the model pth is less than 0.1MB, much smaller tham [ddddocr](https://github.com/86maid/ddddocr) or [Do1e](https://github.com/Do1e/NJUcaptcha))
+- Fast (Fewer params and computations)
 - All in one file(the model is converted to string using `base64`, the only requrement is wasm runtime of onnx)
-
+> Connection to `https://cdn.jsdelivr.net/npm/onnxruntime-web@1.22.0/dist/ort.min.js` is requirement is needed at the first time load the scripts.
 
 ## Installation
 
