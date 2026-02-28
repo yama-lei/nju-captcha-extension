@@ -3,7 +3,7 @@
 一个极度轻量的南京大学统一身份认证验证码自动识别填充脚本。
 
 ## Feature
-- Lightweight (the model pth is less than 0.1MB, much smaller tham [ddddocr](https://github.com/86maid/ddddocr) or [Do1e](https://github.com/Do1e/NJUcaptcha))
+- Lightweight (the model pth is less than 50KB, much smaller tham [ddddocr](https://github.com/86maid/ddddocr) or [Do1e](https://github.com/Do1e/NJUcaptcha)), total params counts: 12k. 
 - Fast (Fewer params and computations)
 - All in one file(the model is converted to string using `base64`, the only requrement is wasm runtime of onnx)
 > Connection to `https://cdn.jsdelivr.net/npm/onnxruntime-web@1.22.0/dist/ort.min.js` is requirement is needed at the first time load the scripts.
@@ -41,14 +41,20 @@
 
 - 油猴脚本参考：[lyc8503/ddddocr_web](https://github.com/lyc8503/ddddocr_web/blob/master/captcha.user.js)
 - 模型训练参考：[Do1e/NJUcaptcha](https://github.com/Do1e/NJUcaptcha)
-> Tips: 26年初验证码的风格发生了变化，Do1e的数据集也许已经过时！
+> Tips: 26年初验证码的风格发生了变化，Do1e的数据集已经过时！
 
 ## Training&Dataset
 
-Authserver caption was updated in the Feburary 2026, thus creating a data distribution shift, which made the old model failed to recgonize the text. (Due to the overfitting of my model)
+Authserver caption was updated in the Feburary 2026, thus creating a data distribution shift, which made the old model failed to recgonize the text. (Due to the overfitting of my model and the change of charset)
 <img width="1100" height="637" alt="4fa2b3e409c56d7f447e393f0282850a" src="https://github.com/user-attachments/assets/54a1949c-442e-4e84-a5da-460a5ec80366" />
 
-So new datasets are collected using `crawl/crawl.py` to crawl new version of captcha.(To put simply, `https://authserver.nju.edu.cn/authserver/getCaptcha.htl?{a random number}` returns a random captcha img)
+The old charset is `12345678abcdefhknpqxyz` (22 in total) while the new charset is `0-9a-z` (26 in total) 
+
+---
+
+New datasets are collected using `crawl/crawl.py` to crawl new version of captcha.(To put simply, `https://authserver.nju.edu.cn/authserver/getCaptcha.htl?{a random number}` returns a random captcha img) and is annotated by [LLM](https://bailian.console.aliyun.com/cn-beijing/?tab=model#/model-market/detail/qwen3.5-flash) to get a better balance between accuracy and efficiency.
+> Since LLM  is overqualified for this easy task, only simple check is done for verify the correctness of LLM's response. 
+
 
 Lmdb is used to accelarate the speed of data transfortation to avoid IO overdurance caused by creating/deleting numerous small files at one time.
 
